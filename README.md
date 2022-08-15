@@ -14,21 +14,72 @@ Deepspeed is a framework focused on GPU acceleration and requires a CUDA enabled
 
 ### Recommened CUDA version
 
-Below you find a list of CUDA versions that are recommended for DeepSpeed.
+Below you find a list of CUDA versions that are recommended for DeepSpeed. 
 
 #### CUDA 11.3
 
-Cuda 11.3 is the recommended version for DeepSpeed, since we have avialble PyTorch versions for it as well.
+Cuda 11.3 is the recommended version for DeepSpeed, since we have avialble PyTorch versions for it as well. [Reference Gist](https://gist.github.com/Mahedi-61/2a2f1579d4271717d421065168ce6a73).
 
+If you have a different CUDA version installed remove it first.
 
+```bash
+# system update
+sudo apt-get update
+sudo apt-get upgrade -y
 
+# install other import packages
+sudo apt-get install -y g++ freeglut3-dev build-essential libx11-dev libxmu-dev libxi-dev libglu1-mesa libglu1-mesa-dev
+
+# first get the PPA repository driver
+sudo add-apt-repository ppa:graphics-drivers/ppa
+sudo apt update
+
+# install nvidia driver with dependencies
+sudo apt install -y libnvidia-common-470 libnvidia-gl-470 nvidia-driver-470
+
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
+sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
+sudo apt-get update
+
+ # installing CUDA-11.3
+sudo apt install -y cuda-11-3 
+
+# setup your paths
+echo 'export PATH=/usr/local/cuda-11.3/bin:$PATH' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=/usr/local/cuda-11.3/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+source ~/.bashrc
+sudo ldconfig
+
+# install cuDNN v11.3
+# First register here: https://developer.nvidia.com/developer-program/signup
+
+CUDNN_TAR_FILE="cudnn-11.3-linux-x64-v8.2.1.32.tgz"
+wget https://developer.nvidia.com/compute/machine-learning/cudnn/secure/8.2.1.32/11.3_06072021/cudnn-11.3-linux-x64-v8.2.1.32.tgz
+tar -xzvf ${CUDNN_TAR_FILE}
+
+# copy the following files into the cuda toolkit directory.
+sudo cp -P cuda/include/cudnn.h /usr/local/cuda-11.3/include
+sudo cp -P cuda/lib64/libcudnn* /usr/local/cuda-11.3/lib64/
+sudo chmod a+r /usr/local/cuda-11.3/lib64/libcudnn*
+
+# Finally, to verify the installation, check
+nvidia-smi
+nvcc -V
+```
 
 #### Uninstall current CUDA version
 
 ```bash
 sudo apt-get --purge remove "*cublas*" "cuda*" "nsight*" -y
 sudo apt-get --purge remove "*nvidia*" -y 
+sudo apt-get autoremove -y
+sudo apt-get autoclean -y
 sudo rm -rf /usr/local/cuda*
+sudo rm /etc/apt/sources.list.d/cuda*
+# reboots system
+sudo reboot
 ```
 
 
@@ -40,6 +91,12 @@ pip install deepspeed
 pip install torch
 pip install transformers
 ```
+
+### Docker container
+
+The repository contains also a `Dockerfile` with all steps for building a containzerized container environment.
+
+* [Dockerfile](./Dockerfile)
 
 ### Installation from scratch
 
