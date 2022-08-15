@@ -12,9 +12,62 @@ The repository is structured as follows:
 No, matter in which area you are interested in you always will need to setup a correct development/production environment for your use case.
 Deepspeed is a framework focused on GPU acceleration and requires a CUDA enabled GPU with a compatible NVIDIA driver. _There is no CPU support._
 
+
+### Default Installation (`PyPi`) _recommended_
+
+
+```bash
+pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu113
+pip install transformers[sentencepiece] == 4.21.1
+DS_BUILD_OPS=1 DS_BUILD_TRANSFORMER_INFERENCE=1 pip install deepspeed --global-option="build_ext" --global-option="-j8"
+pip install datasets evaluate
+```
+
+### Docker container
+
+The repository contains also a `Dockerfile` with all steps for building a containzerized container environment.
+
+* [Dockerfile](./Dockerfile)
+
+### Installation from scratch
+
+```bash
+pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu113
+pip install transformers[sentencepiece] == 4.21.1
+
+# deepspeed 
+sudo apt install libaio-dev
+pip install triton==1.0.0
+git clone https://github.com/microsoft/DeepSpeed
+# mkdir deepspeed/ops/transformer_inference
+cd DeepSpeed
+DS_BUILD_UTILS=1 DS_BUILD_TRANSFORMER_INFERENCE=1 pip install -e . --global-option="build_ext" --global-option="-j8" --no-cache -v --disable-pip-version-check 2>&1 | tee build.log
+cd ..
+```
+
+### Validation installation 
+
+run report
+
+```bash
+ds_report
+```
+
+_expected outcome:_
+
+```bash
+```
+
+
+
 ### Recommened CUDA version
 
 Below you find a list of CUDA versions that are recommended for DeepSpeed. 
+
+#### AWS Deep Learning AMIs
+
+If you are running on AWS you can also directly select a Deep Learning AMI with the correct CUDA version installed. You can find a list of available DLAMI [here](https://docs.aws.amazon.com/dlami/latest/devguide/appendix-ami-release-notes.html#appendix-ami-release-notes-gpu).
+
 
 #### CUDA 11.3
 
@@ -69,6 +122,10 @@ nvidia-smi
 nvcc -V
 ```
 
+#### CUDA 11.6 
+
+Similar to [CUDA 11.3](#cuda-11-3) we can install CUDA 11.6. Repalce the version with `11-6` in the above command.
+
 #### Uninstall current CUDA version
 
 ```bash
@@ -83,49 +140,6 @@ sudo reboot
 ```
 
 
-
-### Default Installation (`PyPi`) _recommended_
-
-```bash
-pip install deepspeed
-pip install torch
-pip install transformers
-```
-
-### Docker container
-
-The repository contains also a `Dockerfile` with all steps for building a containzerized container environment.
-
-* [Dockerfile](./Dockerfile)
-
-### Installation from scratch
-
-```bash
-pip install torch==1.10.2+cu113 -f https://download.pytorch.org/whl/torch_stable.html
-pip install transformers==4.15.0
-# DS_BUILD_OPS=1 pip install git+https://github.com/microsoft/DeepSpeed.git
-
-# deepspeed 
-sudo apt install libaio-dev
-pip install triton==1.0.0
-git clone https://github.com/microsoft/DeepSpeed
-# mkdir deepspeed/ops/transformer_inference
-cd DeepSpeed
-DS_BUILD_TRANSFORMER_INFERENCE=1 DS_BUILD_UTILS=1 pip install -e . --global-option="build_ext" --global-option="-j8" --no-cache -v --disable-pip-version-check 2>&1 | tee build.log
-cd ..
-```
-
-run report
-
-```bash
-ds_report
-```
-
-_expected outcome:_
-
-```bash
-
-```
 
 ## Helpful Resources
 
