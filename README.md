@@ -19,7 +19,7 @@ Deepspeed is a framework focused on GPU acceleration and requires a CUDA enabled
 ```bash
 pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu113
 pip install transformers[sentencepiece] == 4.21.1
-DS_BUILD_OPS=1 DS_BUILD_TRANSFORMER_INFERENCE=1 pip install deepspeed --global-option="build_ext" --global-option="-j8"
+pip install deepspeed
 pip install datasets evaluate
 ```
 
@@ -41,7 +41,7 @@ pip install triton==1.0.0
 git clone https://github.com/microsoft/DeepSpeed
 # mkdir deepspeed/ops/transformer_inference
 cd DeepSpeed
-DS_BUILD_UTILS=1 DS_BUILD_TRANSFORMER_INFERENCE=1 pip install -e . --global-option="build_ext" --global-option="-j8" --no-cache -v --disable-pip-version-check 2>&1 | tee build.log
+pip install -e . --global-option="build_ext" --global-option="-j8" --no-cache -v --disable-pip-version-check 2>&1 | tee build.log
 cd ..
 ```
 
